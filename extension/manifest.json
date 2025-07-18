@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Sahibinden NLP Analiz",
+  "version": "1.0",
+  "description": "Sahibinden ilan açıklamalarını analiz eden eklenti",
+  "permissions": ["scripting", "activeTab"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.sahibinden.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
