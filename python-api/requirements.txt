@@ -1,5 +1,9 @@
 flask
 flask-cors
-spacy
 transformers
 torch
+spacy
+blobfile
+joblib
+requests
+pandas
