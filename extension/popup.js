@@ -1,7 +1,6 @@
 let currentDescription = "";
 let currentCarDetails = {};
 
-// Türkçe duygu analizi çevirisi
 const sentimentTranslations = {
   "Çok Olumlu": "Çok Olumlu",
   "Olumlu": "Olumlu", 
@@ -10,7 +9,6 @@ const sentimentTranslations = {
   "Çok Olumsuz": "Çok Olumsuz"
 };
 
-// Duygu analizi için CSS sınıfı belirleme
 function getSentimentClass(sentiment) {
   const lowerSentiment = sentiment.toLowerCase();
   if (lowerSentiment.includes("olumlu")) {
@@ -23,7 +21,6 @@ function getSentimentClass(sentiment) {
   return "";
 }
 
-// Araç detaylarını formatlama
 function formatCarDetails(carDetails) {
   if (!carDetails || Object.keys(carDetails).length === 0) {
     return "Araç detayları bulunamadı.";
@@ -44,51 +41,58 @@ function formatCarDetails(carDetails) {
   return formatted || "Detaylar yüklenemedi.";
 }
 
-// Sonuçları gösterme fonksiyonu
+function formatPrice(price) {
+  if (!price || price === "Tahmin yapılamadı") {
+    return "Tahmin yapılamadı";
+  }
+  
+  let cleanPrice = price;
+  if (cleanPrice.startsWith('-')) {
+    cleanPrice = cleanPrice.substring(1);
+  }
+  
+  const numericPrice = cleanPrice.replace(/[^\d]/g, '');
+  if (numericPrice.length <= 3) {
+    return cleanPrice;
+  }
+  
+  const shortenedPrice = numericPrice.slice(0, -3);
+  const formattedPrice = shortenedPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return formattedPrice + " ₺";
+}
+
 function displayResults(data) {
-  // Fiyat tahmini
   const priceElement = document.querySelector("#pricePrediction .result-value");
   if (data.predicted_price) {
-    // Negatif değerleri pozitife çevir
-    let price = data.predicted_price;
-    if (price.startsWith('-')) {
-      price = price.substring(1); // Eksi işaretini kaldır
-    }
-    priceElement.textContent = price;
+    priceElement.textContent = formatPrice(data.predicted_price);
   } else {
     priceElement.textContent = "Tahmin yapılamadı";
   }
 
-  // Duygu analizi
   const sentimentElement = document.getElementById("sentiment");
   if (data.sentiment) {
     sentimentElement.textContent = data.sentiment;
     sentimentElement.className = `result-value ${getSentimentClass(data.sentiment)}`;
   }
 
-  // Güven oranı
   const confidenceElement = document.getElementById("confidence");
   if (data.confidence) {
     confidenceElement.textContent = data.confidence;
   }
 
-  // Açıklama uzunluğu
   const descLengthElement = document.getElementById("descriptionLength");
   if (data.description_length) {
     descLengthElement.textContent = `${data.description_length} karakter`;
   }
 
-  // Özet
   const summaryElement = document.getElementById("summary");
   if (data.summary) {
     summaryElement.textContent = data.summary;
   }
 
-  // Sonuçları göster
   document.getElementById("results").style.display = "block";
 }
 
-// Loading durumunu yönetme
 function showLoading() {
   document.getElementById("loading").style.display = "block";
   document.getElementById("analyzeBtn").disabled = true;
@@ -101,7 +105,6 @@ function hideLoading() {
   document.getElementById("analyzeBtn").disabled = false;
 }
 
-// Hata gösterme
 function showError(message) {
   const errorElement = document.getElementById("error");
   errorElement.textContent = message;
@@ -122,16 +125,11 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
         
-        // Açıklama
         document.getElementById("desc").innerText = response.description;
         currentDescription = response.description;
         
-        // Araç detayları
         currentCarDetails = response.carDetails;
         document.getElementById("carDetails").innerHTML = formatCarDetails(currentCarDetails);
-        
-        console.log("Açıklama metni:", currentDescription);
-        console.log("Diğer veriler:", currentCarDetails);
       }
     );
   });

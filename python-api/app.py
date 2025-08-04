@@ -10,21 +10,17 @@ from io import BytesIO
 app = Flask(__name__)
 CORS(app)
 
-# 1. Duygu analizi
 sentiment_pipeline = pipeline("sentiment-analysis",
     model="nlptown/bert-base-multilingual-uncased-sentiment")
 
-# 2. Özetleme
 summary_id = "sshleifer/distilbart-cnn-12-6"
 summary_tokenizer = AutoTokenizer.from_pretrained(summary_id)
 summary_model = AutoModelForSeq2SeqLM.from_pretrained(summary_id)
 
-# 3. Fiyat tahmini modeli (scikit‑learn joblib)
 MODEL_URL = "https://huggingface.co/VarunKumarGupta2003/Car-Sale-Prediction/resolve/main/Car-Price-Prediction_model.joblib"
 resp = requests.get(MODEL_URL)
 price_model = joblib.load(BytesIO(resp.content))
 
-# 🔧 Ön işleme fonksiyonu
 def preprocess_car_data(raw_data):
     year = int(raw_data.get("Yıl", 2000))
     kms = raw_data.get("KM", "0").replace(".", "").replace(",", "")
@@ -48,10 +44,8 @@ def preprocess_car_data(raw_data):
     brand_Hyundai = 1 if brand == "hyundai" else 0
     brand_Toyota = 1 if brand == "toyota" else 0
 
-    # present_price: modelde zorunlu, ama sahibinden'de yok → dummy değer
     present_price = 1.0
 
-    # owner → tahmini değerler, çünkü bilgi yok
     owner_0 = 0
     owner_1 = 1
     owner_2 = 0
@@ -85,7 +79,6 @@ def analyze():
     description = data.get('description', '')
     car = data.get('carDetails', {})
 
-    # 🔹 Duygu analizi
     sent = sentiment_pipeline(description)[0]
     map_labels = {
         "1 star": "Çok Olumsuz",
@@ -97,7 +90,6 @@ def analyze():
     sentiment_label = map_labels.get(sent["label"], sent["label"])
     confidence = f"{sent['score'] * 100:.2f}%"
 
-    # 🔹 Özetleme
     if len(description) < 10:
         summary = description
     else:
@@ -105,7 +97,6 @@ def analyze():
         gen = summary_model.generate(tokens, max_length=80, min_length=20, num_beams=4, early_stopping=True)
         summary = summary_tokenizer.decode(gen[0], skip_special_tokens=True)
 
-    # 🔹 Fiyat tahmini
     try:
         processed = preprocess_car_data(car)
         df = pd.DataFrame([processed])
