@@ -1,19 +1,291 @@
 <!DOCTYPE html>
 <html>
   <head>
-      <meta charset="UTF-8">
-    <title>NLP Analiz</title>
+    <meta charset="UTF-8">
+    <title>CarAnalyzer</title>
     <style>
-      body { font-family: Arial, sans-serif; width: 300px; }
-      #desc { margin: 10px 0; }
-      button { margin-top: 10px; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        width: 380px;
+        min-height: 480px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        border-radius: 50px;
+        margin: 20px 20px 20px 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      }
+
+      .container {
+        background: white;
+        margin: 15px;
+        border-radius: 35px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        border-radius: 35px 35px 0 0;
+      }
+
+      .header h2 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .header p {
+        font-size: 12px;
+        opacity: 0.9;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .section {
+        margin-bottom: 20px;
+      }
+
+      .section-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #667eea;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+      }
+
+      .section-title::before {
+        content: "";
+        margin-right: 8px;
+      }
+
+      .description {
+        background: #f8f9fa;
+        padding: 12px;
+        border-radius: 30px;
+        font-size: 12px;
+        line-height: 1.4;
+        max-height: 80px;
+        overflow-y: auto;
+        border-left: 4px solid #667eea;
+        text-align: center;
+      }
+
+      .analyze-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      .analyze-btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .analyze-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .results {
+        display: none;
+        margin-top: 20px;
+      }
+
+      .result-card {
+        background: #f8f9fa;
+        border-radius: 30px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-left: 4px solid #28a745;
+      }
+
+      .result-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        padding: 8px 0;
+        border-bottom: 1px solid #e9ecef;
+      }
+
+      .result-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+
+      .result-label {
+        font-weight: 600;
+        color: #495057;
+        font-size: 12px;
+      }
+
+      .result-value {
+        font-weight: 500;
+        color: #212529;
+        font-size: 12px;
+        text-align: right;
+      }
+
+      .price-prediction {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        padding: 15px;
+        border-radius: 30px;
+        text-align: center;
+        margin-bottom: 15px;
+      }
+
+      .price-prediction .result-label {
+        color: white;
+        font-size: 14px;
+        margin-bottom: 5px;
+      }
+
+      .price-prediction .result-value {
+        color: white;
+        font-size: 18px;
+        font-weight: 700;
+        text-align: center;
+        display: block;
+        margin: 0 auto;
+      }
+
+      .sentiment-positive {
+        color: #28a745;
+      }
+
+      .sentiment-neutral {
+        color: #ffc107;
+      }
+
+      .sentiment-negative {
+        color: #dc3545;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 20px;
+        color: #667eea;
+      }
+
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 12px;
+        border-radius: 30px;
+        border-left: 4px solid #dc3545;
+        margin-top: 15px;
+      }
+
+      .car-details {
+        background: #e3f2fd;
+        padding: 12px;
+        border-radius: 30px;
+        font-size: 11px;
+        line-height: 1.3;
+        max-height: 100px;
+        overflow-y: auto;
+        border-left: 4px solid #2196f3;
+      }
+
+      .car-details strong {
+        color: #1976d2;
+      }
+
+      .summary-text {
+        background: #f8f9fa;
+        padding: 12px;
+        border-radius: 30px;
+        font-size: 12px;
+        line-height: 1.4;
+        max-height: 80px;
+        overflow-y: auto;
+        border-left: 4px solid #667eea;
+        text-align: left;
+      }
     </style>
   </head>
   <body>
-    <h3>İlan Açıklaması</h3>
-    <div id="desc">Yükleniyor...</div>
-    <button id="analyzeBtn">Analiz Et</button>
-    <div id="result"></div>
+    <div class="container">
+      <div class="header">
+        <h2>CarAnalyzer</h2>
+        <p>Sahibinden.com İlan Analizi</p>
+      </div>
+      
+      <div class="content">
+        <div class="section">
+          <div class="section-title">İlan Açıklaması</div>
+          <div id="desc" class="description">Yükleniyor...</div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Araç Detayları</div>
+          <div id="carDetails" class="car-details">Yükleniyor...</div>
+        </div>
+
+        <button id="analyzeBtn" class="analyze-btn">Analiz Et</button>
+
+        <div id="loading" class="loading" style="display: none;">
+          <div>Analiz yapılıyor...</div>
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div id="results" class="results">
+          <div class="section">
+            <div class="section-title">Fiyat Tahmini</div>
+            <div id="pricePrediction" class="price-prediction">
+              <div class="result-label">Tahmini Fiyat</div>
+              <div class="result-value">-</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Analiz Sonuçları</div>
+            <div id="analysisResults" class="result-card">
+              <div class="result-item">
+                <span class="result-label">Duygu Analizi:</span>
+                <span id="sentiment" class="result-value">-</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Güven Oranı:</span>
+                <span id="confidence" class="result-value">-</span>
+              </div>
+              <div class="result-item">
+                <span class="result-label">Açıklama Uzunluğu:</span>
+                <span id="descriptionLength" class="result-value">-</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Özet</div>
+            <div id="summary" class="summary-text">-</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <script src="popup.js"></script>
   </body>
 </html>

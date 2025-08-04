@@ -1,11 +1,18 @@
 {
   "manifest_version": 3,
-  "name": "Sahibinden NLP Analiz",
+  "name": "CarAnalyzer",
   "version": "1.0",
-  "description": "Sahibinden ilan açıklamalarını analiz eden eklenti",
+  "description": "Sahibinden.com araç ilanlarını analiz eden, fiyat tahmini yapan eklenti",
   "permissions": ["scripting", "activeTab"],
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_title": "CarAnalyzer",
+    "default_icon": {
+      "16": "icon.png",
+      "32": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
   },
   "content_scripts": [
     {

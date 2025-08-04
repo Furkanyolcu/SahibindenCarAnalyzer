@@ -1,8 +1,4 @@
-alert("Content script yüklendi!");
-console.log("Content script yüklendi!");
-
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log("Content script mesaj aldı:", request);
   if (request.action === "getCarData") {
     // Açıklama
     let descDiv = document.getElementById("classifiedDescription");
