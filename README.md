@@ -74,7 +74,7 @@ python app.py
 <img width="1670" height="952" alt="image" src="https://github.com/user-attachments/assets/3380bae5-b392-4bd8-9e83-6b310ab846d5" />
 
 ### Analiz Sonuçları
-<img width="1670" height="947" alt="Ekran görüntüsü 2025-08-04 180755" src="https://github.com/user-attachments/assets/a4bc6220-e4aa-4417-9306-97fbebbcb93f" />
+<img width="1676" height="953" alt="image" src="https://github.com/user-attachments/assets/99645ff1-ed5e-4dc5-963f-5f7d51d7b9a8" />
 
 
 ## 🔧 Geliştirme
